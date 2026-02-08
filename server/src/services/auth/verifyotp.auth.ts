@@ -1,7 +1,6 @@
 import { prisma } from "../../lib/prisma.js";
 import type { VerifyOTPInput } from "../../types/type.js";
 
-
 /* Verify OTP */
 export const verifyOTP = async (data: VerifyOTPInput) => {
   const existingUser = await prisma.authSession.findUnique({
@@ -10,6 +9,10 @@ export const verifyOTP = async (data: VerifyOTPInput) => {
 
   if (!existingUser) {
     throw new Error("User not found");
+  }
+
+  if (existingUser.is_verified) {
+    throw new Error("OTP already used. Please request a new one.");
   }
 
   if (!existingUser.otp) {

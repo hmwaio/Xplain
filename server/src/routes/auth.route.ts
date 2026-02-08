@@ -9,6 +9,7 @@ const router = Router();
 
 /* SignUp */
 router.post("/send-otp", otpPerMinuteLimiter, otpPerHourLimiter, otpPerDayLimiter, send);
+router.post("/resend-otp", otpPerMinuteLimiter, otpPerHourLimiter, otpPerHourLimiter, send)
 router.post("/verify-otp", otpVerifyLimiter, verify);
 router.post("/registration", signup);
 
