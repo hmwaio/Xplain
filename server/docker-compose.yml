@@ -1,0 +1,22 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: blog-pg
+    environment:
+      POSTGRES_USER: hmwaio
+      POSTGRES_PASSWORD: Hmwaio123
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    container_name: blog-adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  postgres_data:

@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model AuthSession {
+  authsession_id String   @id @default(uuid())
+  email          String   @unique
+  otp            String
+  otp_expires_at DateTime
+  is_verified    Boolean  @default(false)
+  created_at     DateTime @default(now())
+
+  @@index([email])
+}
+
+model User {
+  user_id     Int         @id @default(autoincrement())
+  email       String      @unique
+  password    String
+  name        String
+  is_verified Boolean     @default(false)
+  profile     Profile?
+  posts       Post[]
+  likes       Like[]
+  comments    Comment[]
+  savedPosts  SavedPost[]
+  created_at  DateTime    @default(now())
+}
+
+model Profile {
+  profile_id      Int     @id @default(autoincrement())
+  profile_picture String?
+  cover_picture   String?
+  following       Int     @default(0)
+  followers       Int     @default(0)
+  user            User    @relation(fields: [user_id], references: [user_id])
+  user_id         Int     @unique
+}
+
+model Post {
+  post_id      Int         @id @default(autoincrement())
+  title        String
+  post_picture String?
+  content      String?
+  likes        Like[]
+  comments     Comment[]
+  savedBy      SavedPost[]
+  tags         Tag[]
+  category     Category?   @relation(fields: [category_id], references: [category_id])
+  category_id  Int?
+  status       String      @default("draft")
+  author       User        @relation(fields: [author_id], references: [user_id])
+  author_id    Int
+  published_at DateTime?
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
+}
+
+model Like {
+  like_id  Int      @id @default(autoincrement())
+  user_id  Int
+  post_id  Int
+  post     Post     @relation(fields: [post_id], references: [post_id], onDelete: Cascade)
+  user     User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  liked_at DateTime @default(now())
+
+  @@unique([user_id, post_id])
+}
+
+model Comment {
+  comment_id   Int      @id @default(autoincrement())
+  content      String
+  user_id      Int
+  post_id      Int
+  post         Post     @relation(fields: [post_id], references: [post_id], onDelete: Cascade)
+  user         User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  commented_at DateTime @default(now())
+}
+
+model SavedPost {
+  saved_id Int      @id @default(autoincrement())
+  user_id  Int
+  post_id  Int
+  post     Post     @relation(fields: [post_id], references: [post_id], onDelete: Cascade)
+  user     User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  saved_at DateTime @default(now())
+
+  @@unique([user_id, post_id])
+}
+
+model Tag {
+  tag_id     Int      @id @default(autoincrement())
+  name       String   @unique
+  posts      Post[]
+  created_at DateTime @default(now())
+}
+
+model Category {
+  category_id Int      @id @default(autoincrement())
+  name        String   @unique
+  posts       Post[]
+  created_at  DateTime @default(now())
+}
