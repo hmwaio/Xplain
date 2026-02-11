@@ -1,4 +1,4 @@
-import { BlogCardProps } from "../types/type";
+import { BlogCardProps } from "../../types/type";
 
 const PostCard = ({
   id,
