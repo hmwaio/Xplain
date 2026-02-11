@@ -3,7 +3,7 @@ import { send, verify, signup } from "../controllers/auth/signup.controller.js";
 import { signin } from "../controllers/auth/signin.controller.js";
 import { signout } from "../controllers/auth/signout.controller.js";
 import { forgotPass, resetOTP, resetPass } from "../controllers/auth/forgot.controller.js";
-import { otpPerDayLimiter, otpPerHourLimiter, otpPerMinuteLimiter, otpVerifyLimiter } from "../middleware/rateLimiter/auth.middleware.js";
+import { otpPerDayLimiter, otpPerHourLimiter, otpPerMinuteLimiter, otpVerifyLimiter } from "../middleware/rateLimiter/timer.middleware.js";
 
 const router = Router();
 

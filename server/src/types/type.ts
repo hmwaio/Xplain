@@ -9,6 +9,7 @@ declare global {
   }
 }
 
+/* Authentication */
 const strictEmailRegex = /^[a-zA-Z0-9.!#$%&'*\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/i;
 
 export const sendOtpSchema = z.object({
@@ -35,6 +36,18 @@ export const resetPasswordSchema = z.object({
 });
 
 
+/* Post */
+export const createPostSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters"),
+  content: z.string().optional(),
+  post_picture: z.url().optional(),
+  post_picture_id: z.string().optional(),
+  category_id: z.number().int().positive().optional(),
+  tags: z.array(z.string()).optional(),
+  status: z.enum(["draft", "published"]).default("draft"),
+});
+
+
 
 /* Typescript types (inferred from zod schemas) */
 export type SendOtpInput = z.infer<typeof sendOtpSchema>
@@ -43,7 +56,25 @@ export type CompleteRegistrationInput = z.infer<typeof completeRegistrationSchem
 export type SignInInput = z.infer<typeof signInSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 
+export type CreatePostInput = z.infer<typeof createPostSchema>;
 
+export const APPS = ["Blog"] as const; // For now, just one app
+export const ENTITIES = ["user", "post"] as const;
+export const PURPOSES = [
+  "profile-picture",
+  "cover-picture", 
+  "post-picture"
+] as const;
+
+type App = typeof APPS[number];
+type Entity = typeof ENTITIES[number];
+type Purpose = typeof PURPOSES[number];
+
+export type UploaderOptions = {
+  app: App;
+  entity: Entity;
+  purpose: Purpose;
+}
 
 export type UserTokenPayLoad = {
   user_id: number;

@@ -39,32 +39,35 @@ model User {
 }
 
 model Profile {
-  profile_id      Int     @id @default(autoincrement())
-  profile_picture String?
-  cover_picture   String?
-  following       Int     @default(0)
-  followers       Int     @default(0)
-  user            User    @relation(fields: [user_id], references: [user_id])
-  user_id         Int     @unique
+  profile_id         Int     @id @default(autoincrement())
+  profile_picture    String?
+  profile_picture_id String?
+  cover_picture      String?
+  cover_picture_id   String?
+  following          Int     @default(0)
+  followers          Int     @default(0)
+  user               User    @relation(fields: [user_id], references: [user_id])
+  user_id            Int     @unique
 }
 
 model Post {
-  post_id      Int         @id @default(autoincrement())
-  title        String
-  post_picture String?
-  content      String?
-  likes        Like[]
-  comments     Comment[]
-  savedBy      SavedPost[]
-  tags         Tag[]
-  category     Category?   @relation(fields: [category_id], references: [category_id])
-  category_id  Int?
-  status       String      @default("draft")
-  author       User        @relation(fields: [author_id], references: [user_id])
-  author_id    Int
-  published_at DateTime?
-  created_at   DateTime    @default(now())
-  updated_at   DateTime    @updatedAt
+  post_id         Int         @id @default(autoincrement())
+  title           String
+  post_picture    String?
+  post_picture_id String?
+  content         String?
+  tags            Tag[]
+  category        Category?   @relation(fields: [category_id], references: [category_id])
+  category_id     Int?
+  status          String      @default("draft")
+  author          User        @relation(fields: [author_id], references: [user_id])
+  author_id       Int
+  published_at    DateTime?
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+  likes           Like[]
+  comments        Comment[]
+  savedBy         SavedPost[]
 }
 
 model Like {
