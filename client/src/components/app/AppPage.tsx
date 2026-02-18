@@ -1,11 +1,18 @@
+import { useNavigate } from "react-router-dom";
 
 function AppPage() {
+  const navigate = useNavigate();
+  function handleParticipate () {
+    navigate("/")
+  }
   return (
     <>
       <div>
         <div className="md:flex h-10/12">
           <header className="h-1/6 w-full text-3xl font-bold md:w-1/2 md:h-full md:bg-black">
-            <h1 className="ml-10 text-orange-500 md:mt-56 md:mb-72 md:ml-20 lg:text-9xl md:text-8xl md:text-white">LOGO</h1>
+            <h1 className="ml-10 text-orange-500 md:mt-56 md:mb-72 md:ml-20 lg:text-9xl md:text-8xl md:text-white">
+              LOGO
+            </h1>
           </header>
           <main className="mt-4 md:mt-16 h-5/6 md:w-1/2 md:h-full flex flex-col items-center">
             <section className="flex flex-col justify-start mx-3">
@@ -15,12 +22,14 @@ function AppPage() {
               <h3 className="text-xl md:text-2xl mt-5 md:mt-10">
                 A place to share ideas & deepen your understanding
               </h3>
-              <h2 className="text-xl font-semibold mt-20 md:text-3xl">Join Now</h2>
+              <h2 className="mt-10 text-xl font-semibold md:mt-20 md:text-3xl">
+                Join Now
+              </h2>
             </section>
             <section className="flex flex-col justify-center items-center mt-5 gap-5">
-              <h5 className="w-48 text-xl text-center rounded-full bg-orange-500 text-white md:w-60 md:h-10 md:text-2xl cursor-pointer">
+              <button className="w-48 text-xl text-center rounded-full bg-orange-500 text-white md:w-60 md:h-10 md:text-2xl cursor-pointer" onClick={handleParticipate}>
                 Perticipate
-              </h5>
+              </button>
               <p className="text-center">
                 By signing up, you agree to the{" "}
                 <a href="" className="text-blue-900">

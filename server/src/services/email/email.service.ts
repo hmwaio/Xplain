@@ -1,6 +1,4 @@
-import nodemailer from 'nodemailer';
-
-
+import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -16,7 +14,7 @@ export const sendOTPEmail = async (email: string, otp: string) => {
   await transporter.sendMail({
     from: process.env.SMTP_FROM,
     to: email,
-    subject: "OTP for Blog",
+    subject: "OTP for XPlain",
     html: `
       <h1>Verification Code for this ${email}</h1>
       <p>Your OTP: <strong>${otp}</strong></p>
@@ -25,12 +23,11 @@ export const sendOTPEmail = async (email: string, otp: string) => {
   });
 };
 
-
 export const testConnection = async () => {
   try {
     await transporter.verify();
     console.log("Brevo connection successful");
   } catch (error) {
-    console.log("Brevo connection failed ", error)
+    console.log("Brevo connection failed ", error);
   }
-}
+};

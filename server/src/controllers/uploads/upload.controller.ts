@@ -1,10 +1,13 @@
 import type { Request, Response } from "express";
+import { HTTP_STATUS } from "../../constants/statusCodes.constant.js";
 import { uploadImage } from "../../services/uploads/cloudinary.service.js";
+
+const { OK, BAD_REQUEST, INTERNAL_SERVER_ERROR } = HTTP_STATUS;
 
 export const uploadProfilePicture = async (req: Request, res: Response) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: "No file uplaoded" });
+      return res.status(BAD_REQUEST).json({ error: "No file uplaoded" });
     }
 
     const result = await uploadImage(req.file, {
@@ -13,16 +16,16 @@ export const uploadProfilePicture = async (req: Request, res: Response) => {
       purpose: "profile-picture",
     });
 
-    res.status(200).json({
+    res.status(OK).json({
       message: "Profile Picture uploaded successfully",
       url: result.url,
       public_id: result.public_id,
     });
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
+      res.status(BAD_REQUEST).json({ error: error.message });
     } else {
-      res.status(500).json({ error: "Upload failed" });
+      res.status(INTERNAL_SERVER_ERROR).json({ error: "Upload failed" });
     }
   }
 };
@@ -30,7 +33,7 @@ export const uploadProfilePicture = async (req: Request, res: Response) => {
 export const uploadCoverPicture = async (req: Request, res: Response) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: "No file uplaoded" });
+      return res.status(BAD_REQUEST).json({ error: "No file uplaoded" });
     }
 
     const result = await uploadImage(req.file, {
@@ -39,16 +42,16 @@ export const uploadCoverPicture = async (req: Request, res: Response) => {
       purpose: "cover-picture",
     });
 
-    res.status(200).json({
+    res.status(OK).json({
       message: "Cover Picture uploaded successfully",
       url: result.url,
       public_id: result.public_id,
     });
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
+      res.status(BAD_REQUEST).json({ error: error.message });
     } else {
-      res.status(500).json({ error: "Upload failed" });
+      res.status(INTERNAL_SERVER_ERROR).json({ error: "Upload failed" });
     }
   }
 };
@@ -56,7 +59,7 @@ export const uploadCoverPicture = async (req: Request, res: Response) => {
 export const uploadPostPicture = async (req: Request, res: Response) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: "No file uplaoded" });
+      return res.status(BAD_REQUEST).json({ error: "No file uplaoded" });
     }
 
     const result = await uploadImage(req.file, {
@@ -65,16 +68,16 @@ export const uploadPostPicture = async (req: Request, res: Response) => {
       purpose: "post-picture",
     });
 
-    res.status(200).json({
+    res.status(OK).json({
       message: "Post image uploaded successfully",
       url: result.url,
       public_id: result.public_id,
     });
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
+      res.status(BAD_REQUEST).json({ error: error.message });
     } else {
-      res.status(500).json({ error: "Upload failed" });
+      res.status(INTERNAL_SERVER_ERROR).json({ error: "Upload failed" });
     }
   }
 };

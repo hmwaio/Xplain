@@ -1,5 +1,6 @@
-import type { JwtPayload } from "jsonwebtoken";
 import { z } from 'zod';
+import type { JwtPayload } from "jsonwebtoken";
+import { CATEGORIES } from "./category.types.js";
 
 declare global {
   namespace Express {
@@ -42,8 +43,8 @@ export const createPostSchema = z.object({
   content: z.string().optional(),
   post_picture: z.url().optional(),
   post_picture_id: z.string().optional(),
-  category_id: z.number().int().positive().optional(),
-  tags: z.array(z.string()).optional(),
+  category: z.enum(CATEGORIES),
+  tags: z.array(z.string()).max(5).optional(),
   status: z.enum(["draft", "published"]).default("draft"),
 });
 

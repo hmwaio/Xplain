@@ -2,6 +2,7 @@ import { prisma } from "../../lib/prisma.js";
 import type { CompleteRegistrationInput } from "../../types/type.js";
 import { signToken } from "../../utils/jwt.js";
 import { hashPassword } from "../../utils/passwords.js";
+import { createProfile } from "../account/createProfile.service.js";
 
 
 /* CompleteRegistration */
@@ -39,6 +40,11 @@ export const CompleteRegistration = async (
       is_verified: true,
     },
   });
+
+  /* auto create profile */
+  await createProfile(user.user_id);
+
+  /* Delete AuthSession */
   await prisma.authSession.delete({
     where: { authsession_id: tempToken },
   });

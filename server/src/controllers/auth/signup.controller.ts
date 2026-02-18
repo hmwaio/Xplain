@@ -1,10 +1,18 @@
 import type { Request, Response } from "express";
-import { completeRegistrationSchema, sendOtpSchema, verifyOtpSchema } from "../../types/type.js";
+import { HTTP_STATUS } from "../../constants/statusCodes.constant.js";
 import { CompleteRegistration } from "../../services/auth/registration.auth.js";
-import { verifyOTP } from "../../services/auth/verifyotp.auth.js";
 import { signupUser } from "../../services/auth/signup.auth.js";
+import { verifyOTP } from "../../services/auth/verifyotp.auth.js";
 import { sendOTPEmail } from "../../services/email/email.service.js";
+import {
+  completeRegistrationSchema,
+  sendOtpSchema,
+  verifyOtpSchema,
+} from "../../types/type.js";
+import { errorResponse, successResponse } from "../../utils/response.js";
 
+const { OK, CREATED, BAD_REQUEST, UNAUTHORIZED, INTERNAL_SERVER_ERROR } =
+  HTTP_STATUS;
 
 export const send = async (req: Request, res: Response) => {
   try {
@@ -14,49 +22,48 @@ export const send = async (req: Request, res: Response) => {
     // TODO: Send OTP via Brevo here
     await sendOTPEmail(email, otp);
 
-    res.status(200).json({
-      message: "OTP sent to your email",
-      email: email  // Echo back for frontend confirmation
-    });
-
+    return successResponse(res, { email }, "OTP sent to your email", OK); // Echo back for frontend confirmation
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
+      res.status(BAD_REQUEST).json({ error: error.message });
     } else {
-      res.status(500).json({ error: "Internal server error" });
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .json({ error: "Internal server error" });
     }
   }
-}
+};
 
 export const verify = async (req: Request, res: Response) => {
   try {
     const data = verifyOtpSchema.parse(req.body);
     const { tempToken } = await verifyOTP(data);
 
-    res.status(200).json({
-      message: "OTP verified successfully",
-      tempToken: tempToken      // Frontend stores this for Step 3
-    });
-    
+    return successResponse(
+      res,
+      { tempToken }, // Frontend stores this for Step 3
+      "OTP verified successfully",
+      OK,
+    );
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
+      res.status(BAD_REQUEST).json({ error: error.message });
     } else {
-      res.status(500).json({ error: "Internal server error" });
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .json({ error: "Internal server error" });
     }
   }
-}
-
-
+};
 
 export const signup = async (req: Request, res: Response) => {
   try {
     // validate inputs
     const data = completeRegistrationSchema.parse(req.body);
-    const tempToken = req.headers.authorization?.split(' ')[1];
+    const tempToken = req.headers.authorization?.split(" ")[1];
 
     if (!tempToken) {
-      return res.status(401).json({ error: "No session token" });
+      return errorResponse(res, "No session token", UNAUTHORIZED);
     }
 
     const { user, token } = await CompleteRegistration(data, tempToken);
@@ -70,19 +77,25 @@ export const signup = async (req: Request, res: Response) => {
     });
 
     // send response
-    res.status(201).json({
-      message: "Account created successfully",
-      user: {
-        user_id: user.user_id,
-        email: user.email,
-        name: user.name,
+    return successResponse(
+      res,
+      {
+        user: {
+          user_id: user.user_id,
+          email: user.email,
+          name: user.name,
+        },
       },
-    });
+      "Account created successfully",
+      CREATED,
+    );
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
+      res.status(BAD_REQUEST).json({ error: error.message });
     } else {
-      res.status(500).json({ error: "Internal server error" });
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .json({ error: "Internal server error" });
     }
   }
 };

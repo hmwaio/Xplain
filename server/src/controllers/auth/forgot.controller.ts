@@ -1,7 +1,18 @@
 import type { Request, Response } from "express";
-import { forgotPassword, verifyResetOTP, resetPassword } from "../../services/auth/forgot.auth.js";
-import { resetPasswordSchema, sendOtpSchema, verifyOtpSchema } from "../../types/type.js";
+import { HTTP_STATUS } from "../../constants/statusCodes.constant.js";
+import {
+  forgotPassword,
+  resetPassword,
+  verifyResetOTP,
+} from "../../services/auth/forgot.auth.js";
 import { sendOTPEmail } from "../../services/email/email.service.js";
+import {
+  resetPasswordSchema,
+  sendOtpSchema,
+  verifyOtpSchema,
+} from "../../types/type.js";
+
+const { OK, BAD_REQUEST, UNAUTHORIZED, INTERNAL_SERVER_ERROR } = HTTP_STATUS;
 
 export const forgotPass = async (req: Request, res: Response) => {
   try {
@@ -11,15 +22,17 @@ export const forgotPass = async (req: Request, res: Response) => {
     // TODO: Send OTP via Brevo here
     await sendOTPEmail(email, otp);
 
-    res.status(200).json({
+    res.status(OK).json({
       message: "OTP sent to your email",
       email: email, // Echo back for frontend confirmation
     });
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
+      res.status(BAD_REQUEST).json({ error: error.message });
     } else {
-      res.status(500).json({ error: "Internal server error" });
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .json({ error: "Internal server error" });
     }
   }
 };
@@ -29,15 +42,17 @@ export const resetOTP = async (req: Request, res: Response) => {
     const data = verifyOtpSchema.parse(req.body);
     const { tempToken } = await verifyResetOTP(data);
 
-    res.status(200).json({
+    res.status(OK).json({
       message: "OTP verified successfully",
       tempToken: tempToken, // Frontend stores this for Step 3
     });
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
+      res.status(BAD_REQUEST).json({ error: error.message });
     } else {
-      res.status(500).json({ error: "Internal server error" });
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .json({ error: "Internal server error" });
     }
   }
 };
@@ -49,19 +64,20 @@ export const resetPass = async (req: Request, res: Response) => {
     const tempToken = req.headers.authorization?.split(" ")[1];
 
     if (!tempToken) {
-      return res.status(401).json({ error: "No session token" });
+      return res.status(UNAUTHORIZED).json({ error: "No session token" });
     }
     const { message } = await resetPassword(data, tempToken);
 
-    res.status(200).json({
+    res.status(OK).json({
       message: message,
     });
-
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
+      res.status(BAD_REQUEST).json({ error: error.message });
     } else {
-      res.status(500).json({ error: "Internal server error" });
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .json({ error: "Internal server error" });
     }
   }
 };

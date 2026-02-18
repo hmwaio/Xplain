@@ -1,6 +1,9 @@
 import type { Request, Response } from "express";
+import { HTTP_STATUS } from "../../constants/statusCodes.constant.js";
+import { createPost } from "../../services/posts/createPost.service.js";
 import { createPostSchema } from "../../types/type.js";
-import { createPost } from "../../services/posts/post.service.js";
+
+const { CREATED, BAD_REQUEST, INTERNAL_SERVER_ERROR } = HTTP_STATUS;
 
 export const create = async (req: Request, res: Response) => {
   try {
@@ -10,15 +13,17 @@ export const create = async (req: Request, res: Response) => {
     const author_id = (req as any).user.user_id;
 
     const post = await createPost(data, author_id);
-    res.status(201).json({
+    res.status(CREATED).json({
       message: "Post created successfully",
-      post
+      post,
     });
   } catch (error) {
     if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
+      res.status(BAD_REQUEST).json({ error: error.message });
     } else {
-      res.status(500).json({ error: "Failed to create post" });
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .json({ error: "Failed to create post" });
     }
   }
-}
+};
