@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import type { LoginInput, OTPInput, SendOTPInput, SignupInput, User } from "../types/type.js";
-import apiClient from '../api/client.js';
+import apiClient from '../api/client.api.js';
 
 
 

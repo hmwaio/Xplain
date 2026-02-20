@@ -23,36 +23,7 @@ function Registration() {
 
   return (
     <>
-      <div className="border-2 w-full h-full">
-        <div className="border-2 flex flex-col justify-center items-center">
-          <h3 className="text-2xl font-bold text-blue-700">Register</h3>
-          {error && <p className="text-red-500">{error}</p>}
-          <div className="border w-2/3 flex flex-col gap-6 items-center">
-            <LabeledInput
-              label="Name"
-              placeholder="Enter your full name"
-              onchange={(e) =>
-                setPostInputs({ ...postInputs, name: e.target.value })
-              }
-            />
-            <LabeledInput
-              type="password"
-              label="Password"
-              placeholder="Enter your password"
-              onchange={(e) =>
-                setPostInputs({ ...postInputs, password: e.target.value })
-              }
-            />
-            <button
-              className="rounded-full w-full h-10 bg-blue-600 text-white hover:bg-blue-800 hover:cursor-pointer"
-              onClick={loginRequest}
-              disabled={loading}
-            >
-              {loading ? "Creating..." : "Create Account"}
-            </button>
-          </div>
-        </div>
-      </div>
+      
     </>
   );
 }
