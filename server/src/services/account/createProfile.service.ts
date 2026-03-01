@@ -1,0 +1,9 @@
+import { prisma } from "../../lib/prisma.js";
+
+// auto-called after registration
+export const createProfile = async (userId: number) => {
+  const profile = await prisma.profile.create({
+    data: { user_id: userId }
+  });
+  return profile;
+};
