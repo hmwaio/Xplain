@@ -1,14 +1,16 @@
+import { Github } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import HeroImage1Copy from "../../assets/HeroImage1.png";
 import { LabeledInput } from "../../components/ui/Input.js";
-// import { useAuth } from "../../context/auth.js";
-import { authAPI } from "../../api/auth.api.js";
+import { useAuth } from "../../context/auth.js";
 import type { LoginInputType } from "../../types/auth.types.js";
 
 function Login() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   // const { login } = useAuth();
   const [postInputs, setPostInputs] = useState<LoginInputType>({
@@ -22,8 +24,8 @@ function Login() {
     setLoading(true);
 
     try {
-      await authAPI.login(postInputs);
-      navigate("/home");
+      await login(postInputs);
+      navigate("/");
     } catch (err: any) {
       setError(err.response?.data?.error || "Login failed");
     } finally {
@@ -40,11 +42,15 @@ function Login() {
   return (
     <>
       <div className="min-h-screen bg-gray-50">
-        <h2 className="text-4xl mt-5 mb-16 font-bold text-center">Welcome To <span className="text-orange-600">XPlain</span></h2>
-        <div className=" h-full w-full flex justify-between items-center bg-white">
-          <div className="w-1/2 bg-amber-300">hello</div>
+        <h2 className="text-4xl mt-5 mb-8 md:mb-0 font-bold text-center">
+          Welcome To <span className="text-orange-600">XPlain</span>
+        </h2>
+        <div className="h-full w-full md:flex justify-center items-center bg-white">
+          <section className="hidden md:block md:w-1/2 ">
+            <img src={HeroImage1Copy} alt="" />
+          </section>
 
-          <section className="h-full w-1/2">
+          <section className="h-full w-full md:w-1/2">
             <form
               onSubmit={loginHandler}
               className="flex justify-center items-center "
@@ -54,7 +60,7 @@ function Login() {
                   {error}
                 </div>
               )}
-              <div className=" w-3/4 flex flex-col items-center gap-6">
+              <div className="w-xs md:w-lg flex flex-col items-center gap-6">
                 <div className="w-full flex flex-col items-center gap-6 ">
                   <LabeledInput
                     label="Email"
@@ -93,9 +99,29 @@ function Login() {
                 >
                   Don't have account
                 </button>
+
+                <button
+                  type="button"
+                  className="flex justify-center items-center gap-3 text-lg font-semibold rounded-full w-full h-12 bg-black text-white hover:bg-orange-500 hover:cursor-pointer"
+                  disabled={loading}
+                >
+                  Continue with{" "}
+                  <span className="">
+                    <Github />
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="text-lg font-semibold rounded-full w-full h-12 bg-orange-500/95 text-white hover:bg-orange-500 hover:cursor-pointer"
+                  disabled={loading}
+                >
+                  {loading ? "Sending..." : "Continue with Google"}
+                </button>
               </div>
             </form>
-            <div className="mt-4 text-center text-2xl font-extrabold text-orange-600"><span className="text-3xl">X</span>Plain</div>
+            <div className="mt-4 text-center text-2xl font-extrabold text-orange-600">
+              <span className="text-3xl">X</span>Plain
+            </div>
           </section>
         </div>
       </div>

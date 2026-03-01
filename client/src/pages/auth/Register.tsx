@@ -1,3 +1,4 @@
+import { Facebook, Github } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authAPI } from "../../api/auth.api";
@@ -43,8 +44,7 @@ function Register() {
 
     try {
       const response = await authAPI.verifyOtp({ email, otp });
-      console.log(response);
-      setTempToken(response.data.data.tempToken);
+      setTempToken(response.data.tempToken);
       setStep("registration");
     } catch (err: any) {
       setError(err.response?.data?.error || "Invalid OTP");
@@ -60,12 +60,11 @@ function Register() {
     setLoading(true);
 
     try {
-      const response = await authAPI.completeRegistration(
-        { name, password },
-        tempToken,
-      );
-      setUser(response.data.user);
-      navigate("/home");
+      await authAPI.completeRegistration({ name, password }, tempToken);
+      // setUser(response.data.user);
+      const me = await authAPI.getMe();
+      setUser(me.data);
+      navigate("/");
     } catch (err: any) {
       setError(err.response?.data?.error || "Signup failed");
     } finally {
@@ -87,14 +86,14 @@ function Register() {
               Join <span className="text-orange-500">XPlain</span> Now
             </p>
           </div>
-          <div className="w-3/4 flex items-center justify-center">
+          <div className="w-xs md:w-3/4 flex items-center justify-center">
             {error && (
               <div className="bg-red-50 text-red-600 p-3 rounded">{error}</div>
             )}
 
             {/* Step 1: Email */}
             {step === "email" && (
-              <form onSubmit={handleSendOTP} className="w-1/2">
+              <form onSubmit={handleSendOTP} className="w-full md:w-1/2">
                 <div className="w-full flex flex-col gap-6 items-center justify-center">
                   <LabeledInput
                     type="email"
@@ -111,11 +110,38 @@ function Register() {
                     {loading ? "Sending..." : "Continue with email"}
                   </button>
                   <button
-                  className="text-lg font-semibold text-orange-600 border rounded-full w-full h-12 hover:bg-gray-200 hover:cursor-pointer"
-                  onClick={signinHandler}
-                >
-                  Already have an account
-                </button>
+                    className="mb-10 text-lg font-semibold text-orange-600 border rounded-full w-full h-12 hover:bg-gray-200 hover:cursor-pointer"
+                    onClick={signinHandler}
+                  >
+                    Already have an account
+                  </button>
+                  <button
+                    type="button"
+                    className="flex justify-center items-center gap-3 text-lg font-semibold rounded-full w-full h-12 bg-black text-white hover:bg-orange-500 hover:cursor-pointer"
+                    disabled={loading}
+                  >
+                    Continue with{" "}
+                    <span className="">
+                      <Github />
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className="relative overflow-hidden h-12 w-full rounded-full font-semibold text-white text-lg google-colors"
+                    disabled={loading}
+                  >
+                    Continue with G
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex justify-center items-center gap-2 text-lg font-semibold rounded-full w-full h-12 bg-blue-500/95 text-white hover:bg-orange-500 hover:cursor-pointer"
+                    disabled={loading}
+                  >
+                    Continue with{" "}
+                    <span>
+                      <Facebook />
+                    </span>
+                  </button>
                 </div>
               </form>
             )}

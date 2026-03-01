@@ -11,10 +11,11 @@ const { OK, BAD_REQUEST, INTERNAL_SERVER_ERROR } = HTTP_STATUS;
 export const getOne = async (req: Request, res: Response) => {
   try {
     const postId = parseInt(req.params.id as string);
+    const userId = (req as any).user?.user_id;
     if (isNaN(postId)) {
       return res.status(BAD_REQUEST).json({ error: "Invalid post ID" });
     }
-    const post = await getPostById(postId);
+    const post = await getPostById(postId, userId);
     res.status(OK).json({ post });
   } catch (error) {
     if (error instanceof Error) {
@@ -29,6 +30,7 @@ export const getOne = async (req: Request, res: Response) => {
 export const getAll = async (req: Request, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 20;
+    const userId = (req as any).user?.user_id;
     const cursor =
       req.query.cursorId && req.query.cursorDate
         ? {
@@ -36,7 +38,7 @@ export const getAll = async (req: Request, res: Response) => {
             created_at: new Date(req.query.cursorDate as string),
           }
         : undefined;
-    const result = await getAllPosts(cursor, limit);
+    const result = await getAllPosts(cursor, limit, userId);
     res.status(OK).json(result);
   } catch (error) {
     if (error instanceof Error) {

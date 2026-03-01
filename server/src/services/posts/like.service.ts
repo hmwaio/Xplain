@@ -10,9 +10,9 @@ export const likePost = async (postId: number, userId: number) => {
   }
 
   /* prevent self like */
-  if (post.author_id === userId) {
-    throw new Error("You cannot like your own post");
-  }
+  // if (post.author_id === userId) {
+  //   throw new Error("You cannot like your own post");
+  // }
 
   const existing = await prisma.like.findUnique({
     where: {

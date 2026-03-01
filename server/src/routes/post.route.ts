@@ -21,15 +21,15 @@ router.post("/upload/post-picture", authenticate, upload.single('image'), upload
 
 /* Posts */
 router.post("/new-post", authenticate, validate(createPostSchema), create);
-router.patch("/post/:id", authenticate, update);
-router.delete("/post/:id", authenticate, remove);
-router.get("/post/:id", getOne);      // Public
-router.get("/posts", getAll);          // Public
+router.patch("/post/:id/edit", authenticate, update);
+router.delete("/post/:id/delete", authenticate, remove);
+router.get("/post/:id", authenticate, getOne);      // Public
+router.get("/posts", authenticate, getAll);          // Public
 
 /* Comments */
 router.post("/post/:postId/comment", authenticate, addComment);
-router.delete("/comment/:id", authenticate, removeComment);
-router.get("/post/:postId/comments", getAllComments);
+router.delete("/post/comment/:id", authenticate, removeComment);
+router.get("/post/:postId/comments", authenticate, getAllComments);
 
 /* Likes */
 router.post("/post/:postId/like", authenticate, like);

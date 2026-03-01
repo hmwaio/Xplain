@@ -1,5 +1,6 @@
 import apiClient from './client.api.js'
 import type { LoginInputType, NewPasswordInputType, SignupInputType, SendOTPInputType, VerifyOTPInputType } from "../types/auth.types.js";
+import type { User } from '../types/user.types.js';
 
 export const authAPI = {
   getMe: () => {
@@ -16,7 +17,7 @@ export const authAPI = {
   },
 
   completeRegistration: (data: SignupInputType, tempToken: string) => {
-    return apiClient.post<{ user: any }>("/auth/registration", data, {
+    return apiClient.post<{ user: User }>("/auth/registration", data, {
       headers: { Authorization: `Bearer ${tempToken}` }
     })
   },
@@ -24,7 +25,7 @@ export const authAPI = {
 
   /* Login */
   login: (data: LoginInputType) => {
-    return apiClient.post("/auth/login", data)
+    return apiClient.post<{ user: User }>("/auth/login", data)
   },
 
   /* Logout */

@@ -54,9 +54,39 @@ export const getUserProfile = async (
     limit,
     where: { author_id: userId, status: "published" },
     include: {
+      author: {
+        select: {
+          user_id: true,
+          name: true,
+          profile: {
+            select: {
+              profile_picture: true,
+            },
+          },
+        },
+      },
+      tags: { select: { name: true } },
       _count: { select: { likes: true, comments: true } },
+      ...(viewerId && {
+        likes: {
+          where: { user_id: viewerId },
+          select: { user_id: true }
+        },
+        savedBy: {
+          where: { user_id: viewerId },
+          select: { user_id: true }
+        }
+      })
     },
   });
+
+  const postsWithStatus = getUserPosts.items.map((post: any) => ({
+    ...post,
+    isLiked: post.likes?.length > 0,
+    isSaved: post.savedBy?.length > 0,
+    likes: undefined,
+    savedBy: undefined
+  }));
 
   return {
     profile: {
@@ -72,7 +102,7 @@ export const getUserProfile = async (
       },
       isFollowing: !!isFollowing,
     },
-    posts: getUserPosts.items,
+    posts: postsWithStatus,
     nextCursor: getUserPosts.nextCursor,
     hasMore: getUserPosts.hasMore,
   };

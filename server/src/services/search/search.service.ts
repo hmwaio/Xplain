@@ -13,35 +13,32 @@ export const searchPosts = async (
   page: number = 1,
   limit: number = 20,
 ) => {
-  const skip = (page - 1) * limit;
+  const searchQuery = filters.query?.trim();
 
-  /* build where clause */
-  const where: any = { status: "published" };
+  const where: any = {
+    status: "published",
+  };
 
-  /* text search (title or content) */
-  if (filters.query) {
+  if (searchQuery && searchQuery.length >= 2) {
     where.OR = [
-      { title: { contains: filters.query, mode: "insensitive" } },
-      { content: { contains: filters.query, mode: "insensitive" } },
+      { title: { contains: searchQuery, mode: "insensitive" } },
+      { content: { contains: searchQuery, mode: "insensitive" } },
     ];
   }
 
-  /* filter by category */
-  if (filters.category) {
-    where.category = filters.category;
+  if (filters.category?.trim()) {
+    where.category = filters.category.trim();
   }
 
-  /* filter by tag */
-  if (filters.tag) {
+  if (filters.tag?.trim()) {
     where.tags = {
-      some: { name: filters.tag.toLowerCase() },
+      some: { name: filters.tag.trim().toLowerCase() },
     };
   }
 
-  /* filter by author */
-  if (filters.author) {
+  if (filters.author?.trim()) {
     where.author = {
-      name: { contains: filters.author, mode: "insensitive" },
+      name: { contains: filters.author.trim(), mode: "insensitive" },
     };
   }
 
@@ -50,29 +47,55 @@ export const searchPosts = async (
     page,
     limit,
     where,
+    orderBy: {
+      created_at: "desc",
+    },
     include: {
-      author: { select: { user_id: true, name: true } },
+      author: {
+        select: {
+          user_id: true,
+          name: true,
+          profile: {
+            select: { profile_picture: true },
+          },
+        },
+      },
       tags: { select: { name: true } },
       _count: { select: { likes: true, comments: true } },
     },
   });
 };
 
-/* search users */
 export const searchUsers = async (
   query: string,
   page: number = 1,
   limit: number = 20,
 ) => {
+  const trimmed = query.trim();
+
+  if (trimmed.length < 2) {
+    return {
+      items: [],
+      total: 0,
+      page,
+      limit,
+    };
+  }
+
   return await offsetPaginate({
     model: prisma.user,
     page,
     limit,
     where: {
-      name: { contains: query, mode: "insensitive" },
+      name: { contains: trimmed, mode: "insensitive" },
+    },
+    orderBy: {
+      created_at: "desc",
     },
     include: {
-      profile: { select: { profile_picture: true } },
+      profile: {
+        select: { profile_picture: true },
+      },
     },
   });
 };

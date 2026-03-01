@@ -5,7 +5,7 @@ export const uploadAPI = {
   uploadProfilePicture: (file: File) => {
     const formData = new FormData();
     formData.append("image", file);
-    return apiClient.post("/media/upload/profile-picture", formData, {
+    return apiClient.post("/upload/profile-picture", formData, {
       headers: { "Content-Type": "multipart/form-data" }
     });
   },
@@ -14,7 +14,7 @@ export const uploadAPI = {
   uploadCoverPicture: (file: File) => {
     const formData = new FormData();
     formData.append("image", file);
-    return apiClient.post("/media/upload/cover-picture", formData, {
+    return apiClient.post("/upload/cover-picture", formData, {
       headers: { "Content-Type": "multipart/form-data" }
     });
   },
@@ -23,7 +23,7 @@ export const uploadAPI = {
   uploadPostImage: (file: File) => {
     const formData = new FormData();
     formData.append("image", file);
-    return apiClient.post("/media/upload/post-image", formData, {
+    return apiClient.post("/upload/post-picture", formData, {
       headers: { "Content-Type": "multipart/form-data" }
     });
   },

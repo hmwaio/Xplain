@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma.js";
+import { deleteImage } from "../uploads/cloudinary.service.js";
 
 export const deletePost = async (postId: number, authorId: number) => {
   const existingPost = await prisma.post.findUnique({
@@ -14,8 +15,11 @@ export const deletePost = async (postId: number, authorId: number) => {
   }
 
   if (existingPost.post_picture_id) {
-    const { deleteImage } = await import("../uploads/cloudinary.service.js");
-    await deleteImage(existingPost.post_picture_id);
+    try {
+      await deleteImage(existingPost.post_picture_id);
+    } catch (error) {
+      console.error("Failed to delete image from db:", error)
+    }
   }
 
   await prisma.post.delete({

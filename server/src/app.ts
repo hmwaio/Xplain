@@ -4,12 +4,10 @@ import express from "express";
 import { HTTP_STATUS } from "./constants/statusCodes.constant.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import authRoutes from "./routes/auth.route.js";
-import {
-  default as postRoutes,
-  default as userRoutes,
-} from "./routes/post.route.js";
+import postRoutes from "./routes/post.route.js";
 import searchRoutes from "./routes/search.route.js";
 import tagRoutes from "./routes/tags.route.js";
+import userRoutes from "./routes/user.route.js";
 
 const app = express();
 

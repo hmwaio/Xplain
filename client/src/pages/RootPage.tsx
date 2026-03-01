@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom";
 
-function AppPage() {
+function RootPage() {
   const navigate = useNavigate();
-  function handleParticipate () {
-    navigate("/signup")
+  function handleSignup() {
+    navigate("/signup");
+  }
+  function handleLogin() {
+    navigate("/login");
   }
   return (
     <>
@@ -27,8 +30,17 @@ function AppPage() {
               </h2>
             </section>
             <section className="flex flex-col justify-center items-center mt-5 gap-5">
-              <button className="w-48 text-xl text-center rounded-full bg-orange-500 text-white md:w-60 md:h-10 md:text-2xl cursor-pointer" onClick={handleParticipate}>
-                Perticipate
+              <button
+                className="w-48 text-xl text-center rounded-full bg-orange-500 text-white md:w-60 md:h-10 md:text-2xl cursor-pointer"
+                onClick={handleLogin}
+              >
+                Log in
+              </button>
+              <button
+                className="w-48 text-xl text-center rounded-full bg-black text-white md:w-60 md:h-10 md:text-2xl cursor-pointer"
+                onClick={handleSignup}
+              >
+                Create account
               </button>
               <p className="text-center">
                 By signing up, you agree to the{" "}
@@ -61,4 +73,4 @@ function AppPage() {
   );
 }
 
-export default AppPage;
+export default RootPage;

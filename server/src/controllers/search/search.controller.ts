@@ -21,7 +21,7 @@ export const posts = async (req: Request, res: Response) => {
     const filters = {
       query: req.query.q as string,
       category: req.query.category as string,
-      tags: req.query.tag as string,
+      tag: req.query.tag as string,
       author: req.query.author as string,
     };
     const result = await searchPosts(filters, page, limit);

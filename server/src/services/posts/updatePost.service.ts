@@ -25,7 +25,7 @@ export const updatePost = async (
     updateData.post_picture = data.post_picture ?? null;
   if (data.post_picture_id !== undefined)
     updateData.post_picture_id = data.post_picture_id ?? null;
-  if (data.category !== undefined) updateData.category_id = data.category;
+  if (data.category !== undefined) updateData.category = data.category;
   if (data.status) {
     updateData.status = data.status;
     if (data.status === "published" && !existingPost.published_at) {

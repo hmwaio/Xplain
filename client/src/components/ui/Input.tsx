@@ -21,7 +21,7 @@ export const LabeledInput = ({
           required
           onChange={onchange}
           maxLength={maxlength || 50}
-          className="w-lg h-14 border-2 rounded-2xl px-2 border-gray-400 bg-gray-50 text-gray-800 font-semibold text-lg hover:border-gray-500 focus:outline-none focus:border-orange-600"
+          className="w-xs md:w-lg h-14 border-2 rounded-2xl px-2 border-gray-400 bg-gray-50 text-gray-800 font-semibold text-lg hover:border-gray-500 focus:outline-none focus:border-orange-600"
         />
       </div>
     </>

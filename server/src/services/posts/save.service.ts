@@ -67,8 +67,12 @@ export const unsavePost = async (postId: number, userId: number) => {
 };
 
 /* get user's saved posts */
-export const getSavedPosts = async (userId: number, cursor?: { id: number; created_at: Date }, limit: number = 20) => {
-  return await cursorPaginate({
+export const getSavedPosts = async (
+  userId: number,
+  cursor?: { id: number; created_at: Date },
+  limit: number = 20,
+) => {
+  const result = await cursorPaginate({
     model: prisma.savedPost,
     idField: "saved_id",
     uniqueName: "saved_at_saved_id",
@@ -79,10 +83,47 @@ export const getSavedPosts = async (userId: number, cursor?: { id: number; creat
     include: {
       post: {
         include: {
-          author: { select: { user_id: true, name: true } },
-          _count: { select: { likes: true, comments: true } }
-        }
-      }
+          author: {
+            select: {
+              user_id: true,
+              name: true,
+              profile: {
+                select: {
+                  profile_picture: true,
+                },
+              },
+            },
+          },
+          tags: { select: { name: true } },
+          _count: { select: { likes: true, comments: true } },
+          likes: {
+            where: { user_id: userId },
+            select: { user_id: true }
+          },
+          savedBy: {
+            where: { user_id: userId },
+            select: { user_id: true }
+          }
+        },
+      },
+    },
+  });
+
+  // Transform and return
+  const transformedItems = result.items.map((item: any) => ({
+    ...item,
+    post: {
+      ...item.post,
+      isLiked: item.post.likes?.length > 0,
+      isSaved: item.post.savedBy?.length > 0,
+      likes: undefined,
+      savedBy: undefined
     }
-  })
+  }));
+
+  return {
+    items: transformedItems,
+    nextCursor: result.nextCursor,
+    hasMore: result.hasMore
+  };
 };

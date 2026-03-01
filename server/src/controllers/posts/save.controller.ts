@@ -17,7 +17,7 @@ const parseCursor = (req: Request) => {
     : undefined;
 };
 
-/* POST /api/posts/:postId/save */
+/* POST /api/post/:postId/save */
 export const save = async (req: Request, res: Response) => {
   try {
     const postId = parseInt(req.params.postId as string);
@@ -38,7 +38,7 @@ export const save = async (req: Request, res: Response) => {
   }
 };
 
-/* DELETE /api/posts/:postId/save */
+/* DELETE /api/post/:postId/save */
 export const unsave = async (req: Request, res: Response) => {
   try {
     const postId = parseInt(req.params.postId as string);

@@ -41,8 +41,8 @@ export const resetPasswordSchema = z.object({
 export const createPostSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   content: z.string().optional(),
-  post_picture: z.url().optional(),
-  post_picture_id: z.string().optional(),
+  post_picture: z.union([z.url(), z.null()]).optional(),
+  post_picture_id: z.union([z.string(), z.null()]).optional(),
   category: z.enum(CATEGORIES),
   tags: z.array(z.string()).max(5).optional(),
   status: z.enum(["draft", "published"]).default("draft"),

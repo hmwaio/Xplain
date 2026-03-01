@@ -46,7 +46,7 @@ model Profile {
   profile_picture_id String?
   cover_picture      String?
   cover_picture_id   String?
-  user               User    @relation(fields: [user_id], references: [user_id])
+  user               User    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   user_id            Int     @unique
 }
 
@@ -59,7 +59,7 @@ model Post {
   tags            Tag[]
   category        String?
   status          String      @default("draft")
-  author          User        @relation(fields: [author_id], references: [user_id])
+  author          User        @relation(fields: [author_id], references: [user_id], onDelete: Cascade)
   author_id       Int
   likes           Like[]
   comments        Comment[]
@@ -100,8 +100,8 @@ model Follow {
   following_id Int // who is followed
   created_at   DateTime @default(now())
 
-  follower  User @relation("Followers", fields: [follower_id], references: [user_id])
-  following User @relation("Following", fields: [following_id], references: [user_id])
+  follower  User @relation("Followers", fields: [follower_id], references: [user_id], onDelete: Cascade)
+  following User @relation("Following", fields: [following_id], references: [user_id], onDelete: Cascade)
 
   @@unique([follower_id, following_id])
 }
@@ -119,9 +119,9 @@ model SavedPost {
 }
 
 model Tag {
-  tag_id     Int      @id @default(autoincrement())
-  name       String   @unique
-  usage_count Int   @default(1)
-  posts      Post[]
-  created_at DateTime @default(now())
+  tag_id      Int      @id @default(autoincrement())
+  name        String   @unique
+  usage_count Int      @default(1)
+  posts       Post[]
+  created_at  DateTime @default(now())
 }

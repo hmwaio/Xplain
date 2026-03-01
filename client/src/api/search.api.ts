@@ -9,9 +9,12 @@ export const searchAPI = {
     author?: string;
     page?: number;
     limit?: number;
-  }) => apiClient.get("/search/posts", { params }),
+  }) => {
+    return apiClient.get("/search/posts", { params });
+  },
 
   // Search users
-  searchUsers: (query: string, page?: number, limit?: number) =>
-    apiClient.get("/search/users", { params: { q: query, page, limit } }),
+  searchUsers: (query: string, page?: number, limit?: number) => {
+    return apiClient.get("/search/users", { params: { q: query, page, limit } });
+  },
 };

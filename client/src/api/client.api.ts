@@ -12,7 +12,8 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       cookieStore.delete("token");
-      window.location.href = "/login";
+      // window.location.href = "/login";
+      console.log("Unauthorized request");
     }
     return Promise.reject(error);
   },

@@ -25,5 +25,20 @@ body {
 
 
 
+.google-colors {
+  background: linear-gradient(
+    90deg,
+    #e02514 0%,
+    #eaa235 25%,
+    #FBBC05 25%,
+    #22fb05 50%,
+    #34A853 50%,
+    #34A853 75%,
+    #4285F4 75%,
+    #4285F4 100%
+  );
+}
+
+
 
 
