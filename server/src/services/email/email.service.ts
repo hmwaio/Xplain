@@ -1,33 +1,45 @@
-import nodemailer from "nodemailer";
+import { BrevoClient } from '@getbrevo/brevo';
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
+const brevo = new BrevoClient({
+  apiKey: process.env.BREVO_API_KEY || '',
 });
 
-export const sendOTPEmail = async (email: string, otp: string) => {
-  await transporter.sendMail({
-    from: process.env.SMTP_FROM,
-    to: email,
-    subject: "OTP for XPlain",
-    html: `
-      <h1>Verification Code for this ${email}</h1>
-      <p>Your OTP: <strong>${otp}</strong></p>
-      <p>Expires in 5 minutes.</p>
-    `,
-  });
+export const sendOTPEmail = async (recipientEmail: string, otp: string) => {
+  if (!process.env.SMTP_FROM) {
+    throw new Error('SMTP_FROM not set in environment variables');
+  }
+
+  try {
+    const result = await brevo.transactionalEmails.sendTransacEmail({
+      sender: {
+        name: process.env.BREVO_FROM_NAME || 'XPlain Team',
+        email: process.env.SMTP_FROM,
+      },
+      to: [{ email: recipientEmail }],
+      subject: 'OTP for XPlain',
+      htmlContent: `
+        <h1>Verification Code for ${recipientEmail}</h1>
+        <p>Your OTP is <strong>${otp}</strong></p>
+        <p>This code will expire in 5 minutes.</p>
+      `,
+      textContent: `Your OTP for XPlain is: ${otp} (expires in 5 minutes)`,
+    });
+
+    console.log('Email sent successfully:', result);
+    return result;
+  } catch (error: any) {
+    console.error('Brevo send email failed:', error?.message || error);
+    throw error;
+  }
 };
 
-export const testConnection = async () => {
-  try {
-    await transporter.verify();
-    console.log("Brevo connection successful");
-  } catch (error) {
-    console.log("Brevo connection failed ", error);
+/**
+ * Test Brevo API connection
+ */
+export const testBrevoConnection = () => {
+  if (!process.env.BREVO_API_KEY) {
+    console.warn('BREVO_API_KEY not set — emails will fail');
+  } else {
+    console.log('BREVO API key is loaded and ready');
   }
 };
