@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model AuthSession {
+  authsession_id String   @id @default(uuid())
+  email          String   @unique
+  otp            String
+  otp_expires_at DateTime
+  is_verified    Boolean  @default(false)
+  created_at     DateTime @default(now())
+
+  @@index([email])
+}
+
+model User {
+  user_id     Int         @id @default(autoincrement())
+  email       String      @unique
+  password    String
+  name        String
+  is_verified Boolean     @default(false)
+  profile     Profile?
+  posts       Post[]
+  likes       Like[]
+  comments    Comment[]
+  followers   Follow[]    @relation("Following")
+  following   Follow[]    @relation("Followers")
+  savedPosts  SavedPost[]
+  created_at  DateTime    @default(now())
+}
+
+model Profile {
+  profile_id         Int     @id @default(autoincrement())
+  profile_picture    String?
+  profile_picture_id String?
+  cover_picture      String?
+  cover_picture_id   String?
+  user               User    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user_id            Int     @unique
+}
+
+model Post {
+  post_id         Int         @id @default(autoincrement())
+  title           String
+  post_picture    String?
+  post_picture_id String?
+  content         String?
+  tags            Tag[]
+  category        String?
+  status          String      @default("draft")
+  author          User        @relation(fields: [author_id], references: [user_id], onDelete: Cascade)
+  author_id       Int
+  likes           Like[]
+  comments        Comment[]
+  savedBy         SavedPost[]
+  published_at    DateTime?
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+
+  @@unique([created_at, post_id])
+}
+
+model Like {
+  like_id  Int      @id @default(autoincrement())
+  user_id  Int
+  post_id  Int
+  post     Post     @relation(fields: [post_id], references: [post_id], onDelete: Cascade)
+  user     User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  liked_at DateTime @default(now())
+
+  @@unique([user_id, post_id])
+}
+
+model Comment {
+  comment_id   Int      @id @default(autoincrement())
+  content      String
+  user_id      Int
+  post_id      Int
+  post         Post     @relation(fields: [post_id], references: [post_id], onDelete: Cascade)
+  user         User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  commented_at DateTime @default(now())
+
+  @@unique([commented_at, comment_id])
+}
+
+model Follow {
+  follow_id    Int      @id @default(autoincrement())
+  follower_id  Int // who follows
+  following_id Int // who is followed
+  created_at   DateTime @default(now())
+
+  follower  User @relation("Followers", fields: [follower_id], references: [user_id], onDelete: Cascade)
+  following User @relation("Following", fields: [following_id], references: [user_id], onDelete: Cascade)
+
+  @@unique([follower_id, following_id])
+}
+
+model SavedPost {
+  saved_id Int      @id @default(autoincrement())
+  user_id  Int
+  post_id  Int
+  post     Post     @relation(fields: [post_id], references: [post_id], onDelete: Cascade)
+  user     User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  saved_at DateTime @default(now())
+
+  @@unique([user_id, post_id])
+  @@unique([saved_at, saved_id])
+}
+
+model Tag {
+  tag_id      Int      @id @default(autoincrement())
+  name        String   @unique
+  usage_count Int      @default(1)
+  posts       Post[]
+  created_at  DateTime @default(now())
+}
